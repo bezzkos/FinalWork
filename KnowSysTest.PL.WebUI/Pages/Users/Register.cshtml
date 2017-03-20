@@ -1,0 +1,74 @@
+﻿@using KnowSysTest.PL.WebUI.Helpers
+@using KnowSysTest.PL.WebUI.Helpers.Utilities
+@using KnowSysTest.PL.WebUI.ViewModels.Membership
+
+@{
+    Page.Title = "Register";
+
+    if (User.Identity.IsAuthenticated)
+    {
+        Response.Redirect("~");
+    }
+
+    var modal = Request.QueryString["modal"];
+
+    if (!string.IsNullOrWhiteSpace(modal))
+    {
+        Layout = "~/_LayoutModal.cshtml";
+    }
+
+    if (IsPost)
+    {
+        var login = Request["login"];
+        var password = Request["password"];
+
+        if (!string.IsNullOrWhiteSpace(login) && !string.IsNullOrWhiteSpace(password) && login.Length > 3 && password.Length > 3)
+        {
+            if (!Providers.UserBll.UserExists(login))
+            {
+                var encryptResult = EncryptPassword.CreateHash(password, login);
+                var user = new UserVm(login, encryptResult[0], encryptResult[1]);
+                var result = Providers.UserBll.CreateUser(user);
+
+                if (result)
+                {
+                    var roleUser = Providers.RoleBll.GetRoleByName("User");
+                    var userInRole = new UserInRoleVm(user.UserId, roleUser.RoleId);
+                    result = Providers.userInRoleBll.CreateUserInRole(userInRole);
+
+                    if (result)
+                    {
+                        Providers.UserBll.SaveUser();
+                        Response.Redirect("~/Pages/Users/Login");
+                    }
+                }
+            }
+        }
+    }
+}
+
+<h2>Register</h2>
+<form class="form-horizontal" id="RegisterForm" method="post" action="~/Pages/Users/Register.cshtml">
+    <div class="form-group">
+        <label class="required col-sm-2 control-label" for="Login">Your desired login</label>
+        <div class="col-sm-10">
+            <input class="form-control" id="Login" name="login" placeholder="John" type="text">
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="required col-sm-2 control-label" for="Password">Password</label>
+        <div class="col-sm-10">
+            <input class="form-control" id="Password" name="password" placeholder="Password" type="password">
+        </div>
+    </div>
+    <div class="form-group">
+        <div class="col-sm-offset-2 col-sm-10">
+            <button type="submit" class="btn btn-default">Send</button>
+        </div>
+    </div>
+</form>
+@section scripts{
+<script src="~/Scripts/jquery.validate.js"></script>
+<script src="~/Scripts/customValidateHelper.js"></script>
+<script src="~/Scripts/validateRegisterForm.js"></script>
+}

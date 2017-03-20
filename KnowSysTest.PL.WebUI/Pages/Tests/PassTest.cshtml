@@ -1,0 +1,149 @@
+﻿@using KnowSysTest.Common
+@using KnowSysTest.Entities
+@using KnowSysTest.PL.WebUI.Helpers
+
+@{
+    Page.Title = "Pass";
+    var test = new TestDTO();
+    IReadOnlyList<QuestionDTO> questions = null;
+    List<AnswerDTO> answers = new List<AnswerDTO>();
+
+    if (IsPost)
+    {
+        if (!User.Identity.IsAuthenticated)
+        {
+            Response.Redirect(string.Format("~/Pages/Users/Login.cshtml?backUrl={0}", Request.CurrentExecutionFilePath));
+            Log.For(this).WarnFormat("Unauthorized access attempt - {0}", Request.CurrentExecutionFilePath);
+            return;
+        }
+
+        if (Request["Id"] == null)
+        {
+            Response.SetStatus(HttpStatusCode.NotFound);
+            Log.For(this).WarnFormat("Incorrect input parameter: Id = {0}", Request["Id"]);
+            return;
+        }
+        try
+        {
+            test = Providers.TestBll.GetTest(Guid.Parse(Request["Id"]));
+            Page.Title = string.Format("{0} - Knowledge tests", test.Title);
+            var DTOs = Providers.QuestionBll.GetAllActiveQuestionsByFk(test.Id);
+            questions = DTOs as IReadOnlyList<QuestionDTO> ?? DTOs.ToList();
+        }
+        catch (Exception e)
+        {
+            Log.For(this).ErrorFormat("An error occured while test build: Id = {0}, message: {1}", Request["Id"], e);
+            return;
+        }
+
+        if (questions != null && questions.Any())
+        {
+            foreach (var question in questions)
+            {
+                try
+                {
+                    var tempAns = Providers.AnswerBll.GetAllAnswersByFk(question.Id);
+                    foreach (var answer in tempAns)
+                    {
+                        answers.Add(answer);
+                    }
+                }
+                catch (Exception e)
+                {
+                    Log.For(this).ErrorFormat("An error occured while test build: Id = {0}, message: {1}", test.Id, e);
+                    return;
+                }
+            }
+        }
+
+        if (questions == null || !questions.Any() || answers == null || !answers.Any())
+        {
+            Log.For(this).ErrorFormat("An error occured while test build: Id = {0}. Not available any anwsers or questions", test.Id);
+            throw new ArgumentException();
+        }
+    }
+}
+
+<div class="row" id="DTOContainer">
+    <form action="~/Pages/Tests/TestResult.cshtml" id="OnValidate" method="post" class="col-xs-12 col-md-10">
+        @for (var i = 0; i < questions.Count; i++)
+        {
+            <div class="col-xs-12 alert alert-info">
+                <div class="row">
+                    <div class="col-xs-12">
+                        <p class="col-xs-offset-1">@questions[i].Question</p>
+                        <div class="form-group hidden">
+                            <div class="checkbox">
+                                <label>
+                                    <input type="checkbox" name="QuestionId" value="@questions[i].Id" checked="@questions[i].IsRequired">
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-xs-12 col-md-12">
+                        @foreach (var answer in answers.Where(answer => answer.QuestionFk == questions[i].Id))
+                        {
+                            if (questions[i].IsMultiple)
+                            {
+                                <div class="form-group col-md-6">
+                                    <div class="col-sm-offset-2 col-xs-12">
+                                        <div class="checkbox">
+                                            <label>
+                                                <input type="checkbox" name="AnswerCheckbox" value="@answer.Id"> @answer.Answer
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                            else
+                            {
+                                <div class="form-group col-md-6">
+                                    <div class="col-sm-offset-2 col-xs-12">
+                                        <div class="radio">
+                                            <label>
+                                                <input type="radio" name=@string.Format("AnswerRadio{0}", i) value="@answer.Id"> @answer.Answer
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                        }
+                    </div>
+                </div>
+            </div>
+        }
+        <div class="form-group hidden">
+            <input type="text" class="form-control" name="TestId" value="@test.Id">
+        </div>
+        <button type="submit" class="btn btn-primary">Done!</button>
+    </form>
+
+
+
+
+
+</div>
+@*@section scripts{
+    <script src="~/Scripts/ajaxActions.js"></script>
+    <script src="~/Scripts/jquery.validate.js"></script>
+    <script src="~/Scripts/validateCommonSimpleForms.js"></script>
+}
+
+<div class="modal fade" id="ModalWindow" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="ModalTitle"></h4>
+            </div>
+            <div class="modal-body" id="ModalBody">
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary">Save changes</button>
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->*@

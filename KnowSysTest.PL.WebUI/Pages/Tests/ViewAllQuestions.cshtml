@@ -1,0 +1,162 @@
+﻿@using KnowSysTest.Entities
+@using KnowSysTest.PL.WebUI.Helpers
+
+@{
+    Page.Title = "View Questions";
+    var test = new TestDTO();
+    IReadOnlyList<QuestionDTO> questions = null;
+
+    if (IsPost || Request.QueryString["testId"] != null)
+    {
+        if (!User.Identity.IsAuthenticated || !User.IsInRole("Admin"))
+        {
+            Response.Redirect(string.Format("~/Pages/Users/Login.cshtml?backUrl={0}", Request.CurrentExecutionFilePath));
+            return;
+        }
+        
+        string testIdAsString;
+        if (IsPost)
+        {
+            if (Request["Id"] == null)
+            {
+                Response.SetStatus(HttpStatusCode.NotFound);
+                return;
+            }
+
+            testIdAsString = Request["Id"];
+        }
+        else if (Request.QueryString["testId"] != null)
+        {
+            testIdAsString = Request.QueryString["testId"];
+        }
+        else
+        {
+            Response.SetStatus(HttpStatusCode.NotFound);
+            return;
+        }
+        try
+        {
+            test = Providers.TestBll.GetTest(Guid.Parse(testIdAsString));
+            Page.Title = string.Format("{0} - Questions - Knowledge tests", test.Title);
+            var DTOs = Providers.QuestionBll.GetAllQuestionsByFk(test.Id);
+            questions = DTOs as IReadOnlyList<QuestionDTO> ?? DTOs.ToList();
+        }
+        catch (Exception e)
+        {
+            Response.SetStatus(HttpStatusCode.NotFound);
+            return;
+        }
+
+        if (questions == null || !questions.Any())
+        {
+            <span class="alert alert-danger">
+                No questions here now!
+            </span>
+            return;
+        }
+    }
+}
+
+<div class="row" id="DTOContainer">
+    @foreach (var question in questions)
+    {
+        <div class="col-xs-12 col-md-8 alert alert-info">
+            <div class="row">
+                <div class="col-xs-11 col-md-11">
+                    <div>
+                        <p>Question: @question.Question</p>
+                    </div>
+                    <div class="checkbox">
+                        <label>
+                            <input type="checkbox" checked="@question.IsActive" disabled="disabled"> IsActive?
+                        </label>
+                    </div>
+                    <div class="checkbox">
+                        <label>
+                            <input type="checkbox" checked="@question.IsMultiple" disabled="disabled"> IsMultiple?
+                        </label>
+                    </div>
+                    <div class="checkbox">
+                        <label>
+                            <input type="checkbox" checked="@question.IsRequired" disabled="disabled"> IsRequired?
+                        </label>
+                    </div>
+                </div>
+                <div class="col-xs-1 col-md-1">
+
+                    <form action="~/Pages/Tests/QA/AddAnswer.cshtml" method="post" aria-label="Add Answer" class="top-right">
+                        <button type="submit" data-id="@question.Id" data-title="Add Answer" aria-hidden="true" class="ajax-button glyphicon glyphicon-plus"></button>
+                    </form>
+
+                    <form action="~/Pages/Tests/QA/EditQuestion.cshtml" method="post" aria-label="Edit Question" class="top-right">
+                        <button type="submit" data-id="@question.Id" data-title="Edit Question" aria-hidden="true" class="ajax-button glyphicon glyphicon-edit"></button>
+                    </form>
+
+                    <form action="~/Pages/Tests/QA/DeleteQuestion.cshtml" method="post" aria-label="Delete Question" class="top-right">
+                        <button type="submit" data-id="@question.Id" data-title="Delete Question" aria-hidden="true" class="ajax-button glyphicon glyphicon-remove"></button>
+                    </form>
+                </div>
+            </div>
+            @{
+                var DTOs = Providers.AnswerBll.GetAllAnswersByFk(question.Id);
+                var answers = DTOs as IReadOnlyList<AnswerDTO> ?? DTOs.ToList();
+                if (answers == null || !answers.Any())
+                {
+                    <div class="row"><div class="col-xs-12 col-md-8 alert alert-danger"><span>No answers here now!</span></div></div>
+                }
+                else
+                {
+                    <div class="row">
+                        @foreach (var answer in answers)
+                        {
+                            <div class="col-xs-12 col-md-8 alert alert-info">
+                                <div class="row">
+                                    <div class="col-xs-11 col-md-11">
+                                        <div>
+                                            <p>Answer: @answer.Answer</p>
+                                        </div>
+                                        <div class="checkbox">
+                                            <label>
+                                                <input type="checkbox" checked="@answer.IsCorrect" disabled="disabled"> IsCorrect?
+                                            </label>
+                                        </div>
+                                    </div>
+                                    <div class="col-xs-1 col-md-1">
+                                
+                                        <form action="~/Pages/Tests/QA/EditAnswer.cshtml" method="post" aria-label="Edit Answer" class="top-right">
+                                            <button type="submit" data-id="@answer.Id" data-title="Edit Answer" aria-hidden="true" class="ajax-button glyphicon glyphicon-edit"></button>
+                                        </form>
+
+                                        <form action="~/Pages/Tests/QA/DeleteAnswer.cshtml" method="post" aria-label="Delete Answer" class="top-right">
+                                            <button type="submit" data-id="@answer.Id" data-title="Delete Answer" aria-hidden="true" class="ajax-button glyphicon glyphicon-remove"></button>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                }
+            }
+        </div>
+    }
+</div>
+@section scripts{
+    <script src="~/Scripts/ajaxActions.js"></script>
+    }
+
+    <div class="modal fade" id="ModalWindow" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title" id="ModalTitle"></h4>
+                </div>
+                <div class="modal-body" id="ModalBody">
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary">Save changes</button>
+                </div>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal-dialog -->
+    </div><!-- /.modal -->

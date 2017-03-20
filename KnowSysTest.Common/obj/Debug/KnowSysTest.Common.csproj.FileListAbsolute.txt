@@ -1,0 +1,7 @@
+C:\Users\Nadin\Documents\Visual Studio 2013\Projects\Final_KnowledgeSysTest_KirillBeskostenko\KnowSysTest.Common\bin\Debug\KnowSysTest.Common.dll
+C:\Users\Nadin\Documents\Visual Studio 2013\Projects\Final_KnowledgeSysTest_KirillBeskostenko\KnowSysTest.Common\bin\Debug\KnowSysTest.Common.pdb
+C:\Users\Nadin\Documents\Visual Studio 2013\Projects\Final_KnowledgeSysTest_KirillBeskostenko\KnowSysTest.Common\bin\Debug\log4net.dll
+C:\Users\Nadin\Documents\Visual Studio 2013\Projects\Final_KnowledgeSysTest_KirillBeskostenko\KnowSysTest.Common\bin\Debug\log4net.xml
+C:\Users\Nadin\Documents\Visual Studio 2013\Projects\Final_KnowledgeSysTest_KirillBeskostenko\KnowSysTest.Common\obj\Debug\KnowSysTest.Common.csprojResolveAssemblyReference.cache
+C:\Users\Nadin\Documents\Visual Studio 2013\Projects\Final_KnowledgeSysTest_KirillBeskostenko\KnowSysTest.Common\obj\Debug\KnowSysTest.Common.dll
+C:\Users\Nadin\Documents\Visual Studio 2013\Projects\Final_KnowledgeSysTest_KirillBeskostenko\KnowSysTest.Common\obj\Debug\KnowSysTest.Common.pdb

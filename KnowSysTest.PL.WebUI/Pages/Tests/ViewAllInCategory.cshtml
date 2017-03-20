@@ -1,0 +1,157 @@
+﻿@using KnowSysTest.Entities
+@using KnowSysTest.PL.WebUI.Helpers
+
+@{
+    Page.Title = "View Tests In Category";
+    var category = new CategoryDTO();
+    IReadOnlyList<TestDTO> tests = null;
+    IReadOnlyList<TestDTO> activeTests = null;
+
+    if (IsPost || Request.QueryString["categoryId"] != null)
+    {
+        string categoryIdAsString;
+        if (IsPost)
+        {
+            if (Request["Id"] == null)
+            {
+                Response.SetStatus(HttpStatusCode.NotFound);
+                return;
+            }
+            
+            categoryIdAsString = Request["Id"];
+        }
+        else if (Request.QueryString["categoryId"] != null)
+        {
+            categoryIdAsString = Request.QueryString["categoryId"];
+        }
+        else
+        {
+            Response.SetStatus(HttpStatusCode.NotFound);
+            return;
+        }
+        try
+        {
+            category = Providers.CategoryBll.GetCategory(Guid.Parse(categoryIdAsString));
+            Page.Title = string.Format("{0} - Tests - Knowledge tests", category.Title);
+            IEnumerable<TestDTO> DTOs;
+            if (User.Identity.IsAuthenticated && User.IsInRole("Admin"))
+            {
+                DTOs = Providers.TestBll.GetAllTestsByFk(category.Id);
+                tests = DTOs as IReadOnlyList<TestDTO> ?? DTOs.ToList();
+            }
+            else
+            {
+                DTOs = Providers.TestBll.GetAllActiveTestsByFk(category.Id);
+                activeTests = DTOs as IReadOnlyList<TestDTO> ?? DTOs.ToList();
+            }
+        }
+        catch (Exception e)
+        {
+            Response.SetStatus(HttpStatusCode.NotFound);
+            return;
+        }
+
+        if (User.Identity.IsAuthenticated && User.IsInRole("Admin"))
+        {
+            if (tests == null || !tests.Any())
+            {
+                <span class="alert alert-danger">
+                    No available tests here now!
+                </span>
+                return;
+            }
+        }
+        else
+        {
+            if (activeTests == null || !activeTests.Any())
+            {
+                <span class="alert alert-danger">
+                    No available tests here now!
+                </span>
+                return;
+            }
+        }
+    }
+}
+
+<div class="row" id="DTOContainer">
+    @if (User.Identity.IsAuthenticated && User.IsInRole("Admin"))
+    {
+        foreach (var test in tests)
+        {
+            <div class="col-xs-12 col-md-6 alert alert-info">
+                <h3>@test.Title</h3>
+                <div>
+                    <p>@test.Description</p>
+                </div>
+                <div class="checkbox">
+                    <label>
+                        <input type="checkbox" checked="@test.IsActive" disabled="disabled"> IsActive?
+                    </label>
+                </div>
+                <form action="~/Pages/Tests/PassTest.cshtml" method="post" class="pull-left">
+                    <div class="form-group hidden">
+                        <input type="text" class="form-control" name="Id" value="@test.Id">
+                    </div>
+                    <button type="submit" class="btn btn-default">Pass Test</button>
+                </form>
+                <form action="~/Pages/Tests/ViewAllQuestions.cshtml" method="post" class="pull-right">
+                    <div class="form-group hidden">
+                        <input type="text" class="form-control" name="Id" value="@test.Id">
+                    </div>
+                    <button type="submit" class="btn btn-default">View All Questions</button>
+                </form>
+
+                <form action="~/Pages/Tests/AddQuestion.cshtml" method="post" class="pull-right">
+                    <button type="submit" data-id="@test.Id" data-title="@string.Format("Add Question into '{0}' Test", test.Title)" class="ajax-button btn btn-default">Add Question</button>
+                </form>
+
+                <form action="~/Pages/Tests/Edit.cshtml" method="post" class="pull-right">
+                    <button type="submit" data-id="@test.Id" data-title="Edit Test" class="ajax-button btn btn-default">Edit</button>
+                </form>
+
+                <form action="~/Pages/Tests/Delete.cshtml" method="post" class="pull-right">
+                    <button type="submit" data-id="@test.Id" data-title="Delete Test" class="ajax-button btn btn-default">Delete Test</button>
+                </form>
+            </div>
+        }
+    }
+    else
+    {
+        foreach (var activeTest in activeTests)
+        {
+            <div class="col-xs-12 col-md-6 alert alert-info">
+                <h3>@activeTest.Title</h3>
+                <div>
+                    <p>@activeTest.Description</p>
+                </div>
+                <form action="~/Pages/Tests/PassTest.cshtml" method="post" class="pull-left">
+                    <div class="form-group hidden">
+                        <input type="text" class="form-control" name="Id" value="@activeTest.Id">
+                    </div>
+                    <button type="submit" class="btn btn-default">Pass Test</button>
+                </form>
+            </div>
+        }
+    }
+</div>
+@section scripts{
+    <script src="~/Scripts/ajaxActions.js"></script>
+}
+
+<div class="modal fade" id="ModalWindow" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="ModalTitle"></h4>
+            </div>
+            <div class="modal-body" id="ModalBody">
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary">Save changes</button>
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->

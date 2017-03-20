@@ -1,0 +1,84 @@
+﻿@using KnowSysTest.Common
+@using KnowSysTest.Entities
+@using KnowSysTest.PL.WebUI.Helpers
+@using KnowSysTest.PL.WebUI.ViewModels
+
+@{
+    Page.Title = "Add Test";
+    string categoryIdAsString = null;
+
+    if (IsAjax)
+    {
+        Layout = "~/_LayoutModal.cshtml";
+
+        if (!User.Identity.IsAuthenticated)
+        {
+            Response.Redirect(string.Format("~/Pages/Users/Login.cshtml?backUrl={0}&moDAL=1", Request.CurrentExecutionFilePath));
+            Log.For(this).WarnFormat("Unauthorized access attempt - {0}", Request.CurrentExecutionFilePath);
+            return;
+        }
+
+        if (Request["Id"] == null)
+        {
+            Response.SetStatus(HttpStatusCode.NotFound);
+            Log.For(this).WarnFormat("Incorrect input parameter: Id = {0}", Request["Id"]);
+            return;
+        }
+
+        categoryIdAsString = Request["Id"];
+    }
+
+    if (IsPost)
+    {
+        var title = Request["Title"];
+        var description = Request["Description"];
+        var isActive = false;
+
+        if (!string.IsNullOrWhiteSpace(title) && !string.IsNullOrWhiteSpace(description) && !string.IsNullOrWhiteSpace(Request["CategoryId"]))
+        {
+            categoryIdAsString = Request["CategoryId"];
+            Guid categoryId;
+            try
+            {
+                categoryId = Guid.Parse(categoryIdAsString);
+            }
+            catch (Exception e)
+            {
+                Log.For(this).ErrorFormat("An error occured while test build: Id = {0}, message: {1}", Request["Id"], e);
+                return;
+            }
+            
+            var test = new TestVM(title, description, isActive, categoryId);
+            var result = Providers.TestBll.CreateTest(test);
+
+            if (result)
+            {
+                Response.Redirect(string.Format("~/Pages/Tests/ViewAllInCategory.cshtml?categoryId={0}", categoryId));
+            }
+        }
+    }
+}
+
+<div class="row">
+    <div class="col-xs-12">
+        <form action="~/Pages/Tests/AddTestInCategory.cshtml" id="OnValidate" method="post">
+            <div class="form-group">
+                <label class="required" for="inputTitle">Title</label>
+                <input type="text" class="form-control" id="inputTitle" name="Title" placeholder="Title">
+            </div>
+            <div class="form-group">
+                <label class="required" for="inputDescription">Description</label>
+                <textarea class="form-control" id="inputDescription" name="Description" placeholder="Input test description here"></textarea>
+            </div>
+            <div class="form-group">
+                <input type="text" class="form-control hidden" name="CategoryId" value="@categoryIdAsString">
+            </div>
+            <button type="submit" class="btn btn-default">Done!</button>
+        </form>
+    </div>
+</div>
+
+@section scripts{
+    <script src="~/Scripts/jquery.validate.js"></script>
+    <script src="~/Scripts/validateCommonSimpleForms.js"></script>
+}

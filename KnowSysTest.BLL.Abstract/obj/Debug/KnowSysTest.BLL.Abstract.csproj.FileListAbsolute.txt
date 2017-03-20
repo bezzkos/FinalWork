@@ -1,0 +1,17 @@
+c:\users\nadin\documents\visual studio 2013\Projects\Final_KnowledgeSysTest_KirillBeskostenko\KnowSysTest.BLL.Abstract\obj\Debug\KnowSysTest.BLL.Abstract.csprojResolveAssemblyReference.cache
+c:\users\nadin\documents\visual studio 2013\Projects\Final_KnowledgeSysTest_KirillBeskostenko\KnowSysTest.BLL.Abstract\bin\Debug\KnowSysTest.BLL.Abstract.dll
+c:\users\nadin\documents\visual studio 2013\Projects\Final_KnowledgeSysTest_KirillBeskostenko\KnowSysTest.BLL.Abstract\bin\Debug\KnowSysTest.BLL.Abstract.pdb
+c:\users\nadin\documents\visual studio 2013\Projects\Final_KnowledgeSysTest_KirillBeskostenko\KnowSysTest.BLL.Abstract\bin\Debug\KnowSysTest.Entities.dll
+c:\users\nadin\documents\visual studio 2013\Projects\Final_KnowledgeSysTest_KirillBeskostenko\KnowSysTest.BLL.Abstract\bin\Debug\KnowSysTest.Entities.pdb
+c:\users\nadin\documents\visual studio 2013\Projects\Final_KnowledgeSysTest_KirillBeskostenko\KnowSysTest.BLL.Abstract\obj\Debug\KnowSysTest.BLL.Abstract.dll
+c:\users\nadin\documents\visual studio 2013\Projects\Final_KnowledgeSysTest_KirillBeskostenko\KnowSysTest.BLL.Abstract\obj\Debug\KnowSysTest.BLL.Abstract.pdb
+C:\Users\Nadin\Documents\Visual Studio 2013\Projects\Final_KnowledgeSysTest_KirillBeskostenko\KnowSysTest.BLL.Abstract\bin\Debug\System.Web.Mvc.dll
+C:\Users\Nadin\Documents\Visual Studio 2013\Projects\Final_KnowledgeSysTest_KirillBeskostenko\KnowSysTest.BLL.Abstract\bin\Debug\System.Web.Razor.dll
+C:\Users\Nadin\Documents\Visual Studio 2013\Projects\Final_KnowledgeSysTest_KirillBeskostenko\KnowSysTest.BLL.Abstract\bin\Debug\System.Web.WebPages.Razor.dll
+C:\Users\Nadin\Documents\Visual Studio 2013\Projects\Final_KnowledgeSysTest_KirillBeskostenko\KnowSysTest.BLL.Abstract\bin\Debug\System.Web.WebPages.dll
+C:\Users\Nadin\Documents\Visual Studio 2013\Projects\Final_KnowledgeSysTest_KirillBeskostenko\KnowSysTest.BLL.Abstract\bin\Debug\System.Web.WebPages.Deployment.dll
+C:\Users\Nadin\Documents\Visual Studio 2013\Projects\Final_KnowledgeSysTest_KirillBeskostenko\KnowSysTest.BLL.Abstract\bin\Debug\System.Web.Mvc.xml
+C:\Users\Nadin\Documents\Visual Studio 2013\Projects\Final_KnowledgeSysTest_KirillBeskostenko\KnowSysTest.BLL.Abstract\bin\Debug\System.Web.Razor.xml
+C:\Users\Nadin\Documents\Visual Studio 2013\Projects\Final_KnowledgeSysTest_KirillBeskostenko\KnowSysTest.BLL.Abstract\bin\Debug\System.Web.WebPages.Razor.xml
+C:\Users\Nadin\Documents\Visual Studio 2013\Projects\Final_KnowledgeSysTest_KirillBeskostenko\KnowSysTest.BLL.Abstract\bin\Debug\System.Web.WebPages.xml
+C:\Users\Nadin\Documents\Visual Studio 2013\Projects\Final_KnowledgeSysTest_KirillBeskostenko\KnowSysTest.BLL.Abstract\bin\Debug\System.Web.WebPages.Deployment.xml

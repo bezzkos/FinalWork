@@ -1,0 +1,112 @@
+﻿@using KnowSysTest.Entities
+@using KnowSysTest.PL.WebUI.Helpers
+
+@{
+    Page.Title = "Edit Question";
+    var question = new QuestionDTO();
+
+    if (IsAjax)
+    {
+        Layout = "~/_LayoutModal.cshtml";
+
+        if (!User.Identity.IsAuthenticated || !User.IsInRole("Admin"))
+        {
+            Response.Redirect(string.Format("~/Pages/Users/Login.cshtml?backUrl={0}&modal=1", Request.CurrentExecutionFilePath));
+            return;
+        }
+        if (Request["Id"] == null)
+        {
+            Response.SetStatus(HttpStatusCode.NotFound);
+            return;
+        }
+        try
+        {
+            question = Providers.QuestionBll.GetQuestion(Guid.Parse(Request["Id"]));
+        }
+        catch (Exception e)
+        {
+            Response.SetStatus(HttpStatusCode.NotFound);
+            return;
+        }
+    }
+
+    if (IsPost)
+    {
+        var questionId = Request["QuestionId"];
+
+        if (!string.IsNullOrWhiteSpace(questionId))
+        {
+            question = Providers.QuestionBll.GetQuestion(Guid.Parse(questionId));
+        }
+
+        var questionSelf = Request["Question"];
+        var isMultiple = Request["IsMultiple"];
+        var isRequired = Request["IsRequired"];
+        var testFk = question.TestFk;
+
+        if (!string.IsNullOrWhiteSpace(questionSelf))
+        {
+            question.Question = questionSelf;
+            question.IsMultiple = (isMultiple != null);
+            question.IsRequired = (isRequired != null);
+            var checkQuestion = TestsHelper.ManageQuestionActivityState(question);
+            
+            var result = Providers.QuestionBll.UpdateQuestion(question);
+
+            if (result && checkQuestion && !question.IsActive)
+            {
+                if (!Providers.QuestionBll.CheckRequiredActiveQuestionsCount(question.TestFk))
+                {
+                    var test = Providers.TestBll.GetTest(question.TestFk);
+
+                    test.IsActive = false;
+
+                    result = Providers.TestBll.UpdateTest(test);
+
+                    if (result)
+                    {
+                        Response.Redirect(string.Format("~/Pages/Tests/ViewAllQuestions.cshtml?backUrl={0}&testId={1}", Request.CurrentExecutionFilePath, testFk));
+                    }
+                }
+            }
+            else if (result)
+            {
+                Response.Redirect(string.Format("~/Pages/Tests/ViewAllQuestions.cshtml?backUrl={0}&testId={1}", Request.CurrentExecutionFilePath, testFk));
+            }
+        }
+    }
+}
+
+<div class="row">
+    <div class="col-xs-12">
+        <form action="~/Pages/Tests/QA/EditQuestion.cshtml" id="OnValidate" method="post">
+            <div class="form-group">
+                <label class="required" for="inputQuestion">Question</label>
+                <textarea class="form-control" id="inputQuestion" name="Question">@question.Question</textarea>
+            </div>
+            <div class="form-group">
+                <div class="checkbox">
+                    <label>
+                        <input checked="@question.IsMultiple" name="IsMultiple" type="checkbox"> IsMultiple?
+                    </label>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="checkbox">
+                    <label>
+                        <input checked="@question.IsRequired" name="IsRequired" type="checkbox"> IsRequired?
+                    </label>
+                </div>
+            </div>
+            <div class="form-group">
+                <input type="text" class="form-control hidden" name="QuestionId" value="@question.Id">
+            </div>
+            <button type="submit" class="btn btn-default">Update</button>
+        </form>
+    </div>
+</div>
+
+@section scripts{
+    <script src="~/Scripts/jquery.validate.js"></script>
+    <script src="~/Scripts/validateCommonSimpleForms.js"></script>
+}

@@ -1,0 +1,236 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>
+    </ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{671C7A43-09AA-4568-A08F-C519AAA7B4F0}</ProjectGuid>
+    <ProjectTypeGuids>{349c5851-65df-11da-9384-00065b846f21};{fae04ec0-301f-11d3-bf4b-00c04f79efbc}</ProjectTypeGuids>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>KnowSysTest.PL.WebUI</RootNamespace>
+    <AssemblyName>KnowSysTest.PL.WebUI</AssemblyName>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <UseIISExpress>true</UseIISExpress>
+    <IISExpressSSLPort />
+    <IISExpressAnonymousAuthentication />
+    <IISExpressWindowsAuthentication />
+    <IISExpressUseClassicPipelineMode />
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="log4net, Version=2.0.7.0, Culture=neutral, PublicKeyToken=669e0ddf0bb1aa2a, processorArchitecture=MSIL">
+      <HintPath>..\packages\log4net.2.0.7\lib\net45-full\log4net.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="Microsoft.Web.Infrastructure, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Web.Infrastructure.1.0.0.0\lib\net40\Microsoft.Web.Infrastructure.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Web.DynamicData" />
+    <Reference Include="System.Web.Entity" />
+    <Reference Include="System.Web.ApplicationServices" />
+    <Reference Include="System.ComponentModel.DataAnnotations" />
+    <Reference Include="System" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="System.Web.Extensions" />
+    <Reference Include="System.Web.Helpers, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.WebPages.3.2.3\lib\net45\System.Web.Helpers.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Web.Mvc, Version=5.2.3.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.Mvc.5.2.3\lib\net45\System.Web.Mvc.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Web.Razor, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.Razor.3.2.3\lib\net45\System.Web.Razor.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Web.WebPages, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.WebPages.3.2.3\lib\net45\System.Web.WebPages.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Web.WebPages.Deployment, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.WebPages.3.2.3\lib\net45\System.Web.WebPages.Deployment.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Web.WebPages.Razor, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.WebPages.3.2.3\lib\net45\System.Web.WebPages.Razor.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Web" />
+    <Reference Include="System.Xml" />
+    <Reference Include="System.Configuration" />
+    <Reference Include="System.Web.Services" />
+    <Reference Include="System.EnterpriseServices" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Pages\Categories\Edit.cshtml" />
+    <Content Include="Pages\Categories\Delete.cshtml" />
+    <Content Include="Pages\Categories\CreateNewCategory.cshtml" />
+    <Content Include="Pages\Tests\ViewAllInCategory.cshtml" />
+    <Content Include="Pages\Tests\AddTestInCategory.cshtml" />
+    <Content Include="Pages\Tests\PassTest.cshtml" />
+    <Content Include="Pages\Tests\Delete.cshtml" />
+    <Content Include="Pages\Tests\Edit.cshtml" />
+    <Content Include="Pages\Tests\AddQuestion.cshtml" />
+    <Content Include="Pages\Tests\ViewAllQuestions.cshtml" />
+    <Content Include="Pages\Tests\QA\AddAnswer.cshtml" />
+    <Content Include="Pages\Tests\QA\DeleteQuestion.cshtml" />
+    <Content Include="Pages\Tests\QA\EditQuestion.cshtml" />
+    <Content Include="Pages\Tests\QA\EditAnswer.cshtml" />
+    <Content Include="Pages\Tests\QA\DeleteAnswer.cshtml" />
+    <Content Include="Pages\Users\Profile.cshtml" />
+    <Content Include="Pages\Users\ValidateLogin.cshtml" />
+    <Content Include="Pages\Users\ValidateUser.cshtml" />
+    <Content Include="_LayoutModal.cshtml" />
+    <Content Include="Configuration\log4net.config">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="ErrorPage.cshtml" />
+    <Content Include="Pages\Tests\TestResult.cshtml" />
+    <None Include="Web.Debug.config">
+      <DependentUpon>Web.config</DependentUpon>
+    </None>
+    <None Include="Web.Release.config">
+      <DependentUpon>Web.config</DependentUpon>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Content\bootstrap-theme.css" />
+    <Content Include="Content\bootstrap-theme.min.css" />
+    <Content Include="Content\bootstrap.css" />
+    <Content Include="Content\bootstrap.min.css" />
+    <Content Include="fonts\glyphicons-halflings-regular.svg" />
+    <Content Include="packages.config" />
+    <Content Include="fonts\glyphicons-halflings-regular.woff2" />
+    <Content Include="fonts\glyphicons-halflings-regular.woff" />
+    <Content Include="fonts\glyphicons-halflings-regular.ttf" />
+    <Content Include="fonts\glyphicons-halflings-regular.eot" />
+    <Content Include="Content\bootstrap-theme.min.css.map" />
+    <Content Include="Content\bootstrap-theme.css.map" />
+    <Content Include="Content\bootstrap.min.css.map" />
+    <Content Include="Content\bootstrap.css.map" />
+    <Content Include="default.cshtml" />
+    <Content Include="Pages\Partials\_HeaderPartial.cshtml" />
+    <Content Include="Pages\Users\AddRole.cshtml" />
+    <Content Include="Pages\Users\DeleteRole.cshtml" />
+    <Content Include="Pages\Users\Login.cshtml" />
+    <Content Include="Pages\Users\Logout.cshtml" />
+    <Content Include="Pages\Users\Manage.cshtml" />
+    <Content Include="Pages\Users\Register.cshtml" />
+    <None Include="Scripts\jquery-1.9.1.intellisense.js" />
+    <Content Include="Scripts\ajaxActions.js" />
+    <Content Include="Scripts\ajaxLogout.js" />
+    <Content Include="Scripts\bootstrap.js" />
+    <Content Include="Scripts\bootstrap.min.js" />
+    <Content Include="Scripts\customValidateHelper.js" />
+    <Content Include="Scripts\jquery-1.9.1.js" />
+    <Content Include="Scripts\jquery-1.9.1.min.js" />
+    <None Include="Scripts\jquery.validate-vsdoc.js" />
+    <Content Include="Scripts\jquery.validate.js" />
+    <Content Include="Scripts\jquery.validate.min.js" />
+    <Content Include="Scripts\validateCommonSimpleForms.js" />
+    <Content Include="Scripts\validateLoginForm.js" />
+    <Content Include="Scripts\validateRegisterForm.js" />
+    <Content Include="Web.config">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="Scripts\jquery-1.9.1.min.map" />
+    <Content Include="_Layout.cshtml" />
+    <Content Include="_PageStart.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Helpers\JQueryValidationHelper.cs" />
+    <Compile Include="Helpers\TestsHelper.cs" />
+    <Compile Include="Helpers\KnowSysTestRoleProvider.cs" />
+    <Compile Include="Helpers\Providers.cs" />
+    <Compile Include="Helpers\Utilities\EncryptPassword.cs" />
+    <Compile Include="Helpers\Utilities\ValidateInputFile.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="ViewModels\UserTestVM.cs" />
+    <Compile Include="ViewModels\TestVM.cs" />
+    <Compile Include="ViewModels\QuestionVM.cs" />
+    <Compile Include="ViewModels\CategoryVM.cs" />
+    <Compile Include="ViewModels\AvatarVM.cs" />
+    <Compile Include="ViewModels\AnswerVM.cs" />
+    <Compile Include="ViewModels\Membership\UserInRoleVM.cs" />
+    <Compile Include="ViewModels\Membership\UserVM.cs" />
+    <Compile Include="ViewModels\Membership\RoleVM.cs" />
+  </ItemGroup>
+  <ItemGroup />
+  <ItemGroup>
+    <ProjectReference Include="..\KnowSysTest.BLL.Abstract\KnowSysTest.BLL.Abstract.csproj">
+      <Project>{486D09A6-EE97-424F-B2DE-CD4A1147BA2E}</Project>
+      <Name>KnowSysTest.BLL.Abstract</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\KnowSysTest.Common\KnowSysTest.Common.csproj">
+      <Project>{5B698C1C-19B2-4B9E-931B-3DFAA1D957C7}</Project>
+      <Name>KnowSysTest.Common</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\KnowSysTest.DI.Providers\KnowSysTest.DI.Providers.csproj">
+      <Project>{0E08D002-B9DE-4649-8FFE-269CF177C2C0}</Project>
+      <Name>KnowSysTest.DI.Providers</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\KnowSysTest.Entities\KnowSysTest.Entities.csproj">
+      <Project>{D4474DE9-DABA-49D7-B087-9B5476698713}</Project>
+      <Name>KnowSysTest.Entities</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <PropertyGroup>
+    <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
+    <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>
+  </PropertyGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <Import Project="$(VSToolsPath)\WebApplications\Microsoft.WebApplication.targets" Condition="'$(VSToolsPath)' != ''" />
+  <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v10.0\WebApplications\Microsoft.WebApplication.targets" Condition="false" />
+  <ProjectExtensions>
+    <VisualStudio>
+      <FlavorProperties GUID="{349c5851-65df-11da-9384-00065b846f21}">
+        <WebProjectProperties>
+          <UseIIS>True</UseIIS>
+          <AutoAssignPort>True</AutoAssignPort>
+          <DevelopmentServerPort>56420</DevelopmentServerPort>
+          <DevelopmentServerVPath>/</DevelopmentServerVPath>
+          <IISUrl>http://localhost:56420/</IISUrl>
+          <NTLMAuthentication>False</NTLMAuthentication>
+          <UseCustomServer>False</UseCustomServer>
+          <CustomServerUrl>
+          </CustomServerUrl>
+          <SaveServerSettingsInUserFile>False</SaveServerSettingsInUserFile>
+        </WebProjectProperties>
+      </FlavorProperties>
+    </VisualStudio>
+  </ProjectExtensions>
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

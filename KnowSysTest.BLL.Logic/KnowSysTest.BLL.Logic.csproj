@@ -1,0 +1,76 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{B6010C74-DF14-47DD-90DB-A019A97A2DD4}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>KnowSysTest.BLL.Logic</RootNamespace>
+    <AssemblyName>KnowSysTest.BLL.Logic</AssemblyName>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Configuration" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="AnswerLogic.cs" />
+    <Compile Include="AvatarLogic.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="CategoryLogic.cs" />
+    <Compile Include="QuestionLogic.cs" />
+    <Compile Include="RoleLogic.cs" />
+    <Compile Include="TestLogic.cs" />
+    <Compile Include="UserLogic.cs" />
+    <Compile Include="UserInRoleLogic.cs" />
+    <Compile Include="UserTestLogic.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\KnowSysTest.BLL.Abstract\KnowSysTest.BLL.Abstract.csproj">
+      <Project>{486D09A6-EE97-424F-B2DE-CD4A1147BA2E}</Project>
+      <Name>KnowSysTest.BLL.Abstract</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\KnowSysTest.DAL.Abstract\KnowSysTest.DAL.Abstract.csproj">
+      <Project>{BBBCCFE6-2E69-4C19-A91F-2E3E971D27A1}</Project>
+      <Name>KnowSysTest.DAL.Abstract</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\KnowSysTest.Entities\KnowSysTest.Entities.csproj">
+      <Project>{D4474DE9-DABA-49D7-B087-9B5476698713}</Project>
+      <Name>KnowSysTest.Entities</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

@@ -1,0 +1,102 @@
+﻿@using KnowSysTest.Entities
+@using KnowSysTest.PL.WebUI.Helpers
+
+@{
+    Page.Title = "Delete Answer";
+    var answer = new AnswerDTO();
+    var question = new QuestionDTO();
+
+    if (IsAjax)
+    {
+        Layout = null;
+
+        if (!User.Identity.IsAuthenticated || !User.IsInRole("Admin"))
+        {
+            Response.Redirect(string.Format("~/Pages/Users/Login.cshtml?backUrl={0}&modal=1", Request.CurrentExecutionFilePath));
+            return;
+        }
+        if (Request["Id"] == null)
+        {
+            Response.SetStatus(HttpStatusCode.NotFound);
+            return;
+        }
+        try
+        {
+            answer = Providers.AnswerBll.GetAnswer(Guid.Parse(Request["Id"]));
+        }
+        catch (Exception e)
+        {
+            Response.SetStatus(HttpStatusCode.NotFound);
+            return;
+        }
+        try
+        {
+            question = Providers.QuestionBll.GetQuestion(answer.QuestionFk);
+        }
+        catch (Exception e)
+        {
+            Response.SetStatus(HttpStatusCode.NotFound);
+            return;
+        }
+    }
+
+    if (IsPost)
+    {
+        var answerId = Request["AnswerId"];
+
+        if (!string.IsNullOrWhiteSpace(answerId))
+        {
+            answer = Providers.AnswerBll.GetAnswer(Guid.Parse(answerId));
+            var questinFk = answer.QuestionFk;
+            var result = Providers.AnswerBll.DeleteAnswer(new Guid(answerId));
+
+            if (result)
+            {
+                question = Providers.QuestionBll.GetQuestion(questinFk);
+                var testFk = question.TestFk;
+                
+                var checkQuestion = TestsHelper.ManageQuestionActivityState(question);
+
+                result = Providers.QuestionBll.UpdateQuestion(question);
+
+                if (result && checkQuestion && !question.IsActive)
+                {
+                    if (!Providers.QuestionBll.CheckRequiredActiveQuestionsCount(question.TestFk))
+                    {
+                        var test = Providers.TestBll.GetTest(question.TestFk);
+
+                        test.IsActive = false;
+
+                        result = Providers.TestBll.UpdateTest(test);
+
+                        if (result)
+                        {
+                            Response.Redirect(string.Format("~/Pages/Tests/ViewAllQuestions.cshtml?backUrl={0}&testId={1}", Request.CurrentExecutionFilePath, testFk));
+                        }
+                    }
+                    else
+                    {
+                        Response.Redirect(string.Format("~/Pages/Tests/ViewAllQuestions.cshtml?backUrl={0}&testId={1}", Request.CurrentExecutionFilePath, testFk));
+                    }
+                }
+                else if (result)
+                {
+                    Response.Redirect(string.Format("~/Pages/Tests/ViewAllQuestions.cshtml?backUrl={0}&testId={1}", Request.CurrentExecutionFilePath, testFk));
+                }
+            }
+        }
+    }
+}
+
+<form method="post" action="~/Pages/Tests/QA/DeleteAnswer.cshtml">
+    <span class="alert alert-danger">
+        Are you sure?
+    </span>
+    <div class="form-group">
+        <input type="text" class="form-control hidden" name="AnswerId" value="@answer.Id">
+    </div>
+    <div class="form-group">
+        <button class="btn">Yes</button>
+        <a href="~/Pages/Tests/ViewAllQuestions.cshtml?testId=@question.TestFk" class="btn">No</a>
+    </div>
+</form>

@@ -1,0 +1,70 @@
+﻿@using KnowSysTest.Common
+@using KnowSysTest.PL.WebUI.Helpers
+@{
+    var current = DateTime.Now;
+    Page.Title = "Knowledge tests";
+}
+@{
+    var categories = Providers.CategoryBll.GetAllCategories();
+}
+
+<div class="row" id="DTOContainer">
+    @foreach (var category in categories)
+    {
+        <div class="col-xs-12 col-md-6 alert alert-info">
+            <div class="row">
+                <form action="~/Pages/Tests/ViewAllInCategory.cshtml" method="post">
+                   <div class="form-group">
+                        <input type="text" class="form-control hidden" name="Id" value="@category.Id">
+                    </div>
+                    <button type="submit" class="btn btn-link">@category.Title</button>
+                </form>
+
+                <div class="col-xs-8 col-md-8">
+                    @if (User.Identity.IsAuthenticated && User.IsInRole("Admin"))
+                    {
+                        <form action="~/Pages/Tests/AddTestInCategory.cshtml" method="post" class="pull-right">
+                            <button type="submit" data-id="@category.Id" data-title="Add Test into @category.Title Category" name="Id" class="ajax-button btn btn-default">Add Test</button>
+                        </form>
+
+                        <form action="~/Pages/Categories/Edit.cshtml" method="post" class="pull-right">
+                            <button type="submit" data-id="@category.Id" data-title="Edit Category" class="ajax-button btn btn-default">Edit</button>
+                        </form>
+
+                        <form action="~/Pages/Categories/Delete.cshtml" method="post" class="pull-right">
+                            <button type="submit" data-id="@category.Id" data-title="Delete Category" class="ajax-button btn btn-default">Delete</button>
+                        </form>
+                    }
+                </div>
+            </div>
+        </div>
+    }
+</div>
+@if (User.Identity.IsAuthenticated && User.IsInRole("Admin"))
+{
+    <div class="row">
+        <div class="col-xs-6 col-xs-push-3 panel panel-info">
+            <a href="~/Pages/Categories/CreateNewCategory.cshtml">Create New Category</a>
+        </div>
+    </div>
+}
+@section scripts{
+    <script src="~/Scripts/ajaxActions.js"></script>
+}
+
+<div class="modal fade" id="ModalWindow" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="ModalTitle"></h4>
+            </div>
+            <div class="modal-body" id="ModalBody">
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary">Save changes</button>
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->

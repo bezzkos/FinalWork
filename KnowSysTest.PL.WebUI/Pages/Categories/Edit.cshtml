@@ -1,0 +1,79 @@
+﻿@using KnowSysTest.Common
+@using KnowSysTest.Entities
+@using KnowSysTest.PL.WebUI.Helpers
+
+@{
+    Page.Title = "Edit Category";
+    var category = new CategoryDTO();
+
+    if (IsAjax)
+    {
+        Layout = "~/_LayoutModal.cshtml";
+
+        if (!User.Identity.IsAuthenticated || !User.IsInRole("Admin"))
+        {
+            Response.Redirect(string.Format("~/Pages/Users/Login.cshtml?backUrl={0}&moDAL=1", Request.CurrentExecutionFilePath));
+            Log.For(this).WarnFormat("Unauthorized access attempt - {0}", Request.CurrentExecutionFilePath);
+            return;
+        }
+        if (Request["Id"] == null)
+        {
+            Response.SetStatus(HttpStatusCode.NotFound);
+            Log.For(this).WarnFormat("Incorrect input parameter: Id = {0}", Request["Id"]);
+            return;
+        }
+        try
+        {
+            category = Providers.CategoryBll.GetCategory(Guid.Parse(Request["Id"]));
+        }
+        catch (Exception e)
+        {
+            Response.SetStatus(HttpStatusCode.NotFound);
+            Log.For(this).ErrorFormat("An error occured while category build: Id = {0}, message: {1}", Request["Id"], e);
+            return;
+        }
+    }
+
+    if (IsPost)
+    {
+        var categoryId = Request["CategoryId"];
+
+        if (!string.IsNullOrWhiteSpace(categoryId))
+        {
+            category = Providers.CategoryBll.GetCategory(Guid.Parse(categoryId));
+        }
+
+        var title = Request["CategoryTitle"];
+
+        if (!string.IsNullOrWhiteSpace(title))
+        {
+            category.Title = title;
+            var result = Providers.CategoryBll.UpdateCategory(category);
+
+            if (result)
+            {
+                Response.Redirect("~");
+            }
+        }
+    }
+}
+
+<div class="row">
+    <div class="col-xs-12">
+        <form action="~/Pages/Categories/Edit.cshtml" id="OnValidate" method="post">
+            <div class="form-group">
+                <label class="required" for="inputTitle">Title</label>
+                <input type="text" class="form-control" id="inputTitle" name="Title" value="@category.Title">
+            </div>
+            <div class="form-group">
+                <input type="text" class="form-control hidden" name="CategoryId" value="@category.Id">
+            </div>
+            <button type="submit" class="btn btn-default">Update</button>
+        </form>
+    </div>
+</div>
+
+@section scripts{
+    <script src="~/Scripts/jquery.validate.js"></script>
+    <script src="~/Scripts/validateCommonSimpleForms.js"></script>
+}

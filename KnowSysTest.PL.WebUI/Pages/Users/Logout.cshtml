@@ -1,0 +1,34 @@
+﻿
+@{
+    Page.Title = "Logout";
+    Layout = "~/_Layout.cshtml";
+
+    if (IsAjax)
+    {
+        Layout = null;
+
+        if (!User.Identity.IsAuthenticated)
+        {
+            Response.Redirect("~");
+        }
+    }
+
+    if (!User.Identity.IsAuthenticated)
+    {
+        Response.Redirect("~");
+    }
+
+    if (IsPost)
+    {
+        FormsAuthentication.SignOut();
+        Response.Redirect("~");
+    }
+}
+
+<form method="post" action="~/Pages/Users/Logout.cshtml">
+    <span>Are you sure?</span>
+    <div class="form-group">
+        <button class="btn">Yes</button>
+        <a href="~/default.cshtml" class="btn">No</a>
+    </div>
+</form>

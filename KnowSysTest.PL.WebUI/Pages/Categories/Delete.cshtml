@@ -1,0 +1,108 @@
+﻿@using KnowSysTest.Common
+@using KnowSysTest.Entities
+@using KnowSysTest.PL.WebUI.Helpers
+
+@{
+    Page.Title = "Delete Category";
+    var category = new CategoryDTO();
+
+    if (IsAjax)
+    {
+        Layout = null;
+
+        if (!User.Identity.IsAuthenticated || !User.IsInRole("Admin"))
+        {
+            Response.Redirect(string.Format("~/Pages/Users/Login.cshtml?backUrl={0}&moDAL=1", Request.CurrentExecutionFilePath));
+            Log.For(this).WarnFormat("Unauthorized access attempt - {0}", Request.CurrentExecutionFilePath);
+            return;
+        }
+        if (Request["Id"] == null)
+        {
+            Response.SetStatus(HttpStatusCode.NotFound);
+            Log.For(this).WarnFormat("Incorrect input parameter: Id = {0}", Request["Id"]);
+            return;
+        }
+        try
+        {
+            category = Providers.CategoryBll.GetCategory(Guid.Parse(Request["Id"]));
+        }
+        catch (Exception e)
+        {
+            Log.For(this).ErrorFormat("An error occured while category build: Id = {0}, message: {1}", Request["Id"], e);
+            return;
+        }
+    }
+
+    if (IsPost)
+    {
+        var categoryIdAsString = Request["CategoryId"];
+
+        if (!string.IsNullOrWhiteSpace(categoryIdAsString))
+        {
+            var categoryId = new Guid(categoryIdAsString);
+            bool result;
+
+            var tests = Providers.TestBll.GetAllTestsByFk(categoryId);
+
+            if (tests != null)
+            {
+                foreach (var test in tests)
+                {
+                    var questions = Providers.QuestionBll.GetAllQuestionsByFk(test.Id);
+                    if (questions != null)
+                    {
+                        foreach (var question in questions)
+                        {
+                            var answers = Providers.AnswerBll.GetAllAnswersByFk(question.Id);
+                            if (answers != null)
+                            {
+                                foreach (var answer in answers)
+                                {
+                                    result = Providers.AnswerBll.DeleteAnswer(answer.Id);
+                                    if (!result)
+                                    {
+                                        Log.For(this).ErrorFormat("An error occured while {0} delete", answer);
+                                        throw new Exception();
+                                    }
+                                }
+                            }
+
+                            result = Providers.QuestionBll.DeleteQuestion(question.Id);
+                            if (!result)
+                            {
+                                Log.For(this).ErrorFormat("An error occured while {0} delete", question);
+                                throw new Exception();
+                            }
+                        }
+                    }
+
+                    result = Providers.TestBll.DeleteTest(test.Id);
+                    if (!result)
+                    {
+                        Log.For(this).ErrorFormat("An error occured while {0} delete", test);
+                        throw new Exception();
+                    }
+                }
+            }
+            
+            result = Providers.CategoryBll.DeleteCategory(categoryId);
+            if (result)
+            {
+                Response.Redirect("~");
+            }
+            }
+        }
+    }
+
+<form method="post" action="~/Pages/Categories/Delete.cshtml">
+    <span class ="alert alert-danger">
+        Warning: All related tests would been deleted also. Continue?</span>
+    <a href="~/Pages/Tests/ViewAllInCategory.cshtml?categoryId=@category.Id">View Tests</a>
+        <div class="form-group">
+            <input type="text" class="form-control hidden" name="CategoryId" value="@category.Id">
+        </div>
+        <div class="form-group">
+            <button type="submit" class="btn">Yes</button>
+            <a href="~/default.cshtml" class="btn">No</a>
+        </div>
+</form>

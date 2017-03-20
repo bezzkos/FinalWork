@@ -1,0 +1,40 @@
+﻿@using KnowSysTest.PL.WebUI.Helpers
+@{
+    if (IsAjax)
+    {
+        if (Request["login"] != null && Request["password"] != null)
+        {
+            Layout = null;
+            
+            var password = Request["password"];
+            var login = Request["login"];
+            
+            //if (!JQueryValidationHelper.UsernameCheck(login))
+            //{
+            //    Response.Write("false");
+            //}
+            
+            var user = Providers.UserBll.GetUserByName(login);
+
+            if (user != null)
+            {
+                if (JQueryValidationHelper.PasswordCheck(password, login, user.Salt, user.Password))
+                {
+                    Response.Write("true");
+                }
+                else if (!JQueryValidationHelper.PasswordCheck(password, login, user.Salt, user.Password))
+                {
+                    Response.Write("false");
+                }
+            }
+            else
+            {
+                Response.Write("false");
+            }
+        }
+        else
+        {
+            Response.Write("false");
+        }
+    }
+}

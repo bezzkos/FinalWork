@@ -1,0 +1,92 @@
+﻿@using KnowSysTest.Common
+@using KnowSysTest.Entities
+@using KnowSysTest.PL.WebUI.Helpers
+
+@{
+    Page.Title = "Delete Test";
+    var test = new TestDTO();
+
+    if (IsAjax)
+    {
+        Layout = null;
+
+        if (!User.Identity.IsAuthenticated || !User.IsInRole("Admin"))
+        {
+            Response.Redirect(string.Format("~/Pages/Users/Login.cshtml?backUrl={0}&moDAL=1", Request.CurrentExecutionFilePath));
+            Log.For(this).WarnFormat("Unauthorized access attempt - {0}", Request.CurrentExecutionFilePath);
+            return;
+        }
+        if (Request["Id"] == null)
+        {
+            Response.SetStatus(HttpStatusCode.NotFound);
+            Log.For(this).WarnFormat("Incorrect input parameter: Id = {0}", Request["Id"]);
+            return;
+        }
+        try
+        {
+            test = Providers.TestBll.GetTest(Guid.Parse(Request["Id"]));
+        }
+        catch (Exception e)
+        {
+            Response.SetStatus(HttpStatusCode.NotFound);
+            return;
+        }
+    }
+
+    if (IsPost)
+    {
+        var testIdAsString = Request["TestId"];
+
+        if (!string.IsNullOrWhiteSpace(testIdAsString))
+        {
+            var testId = new Guid(testIdAsString);
+            bool result;
+
+                var questions = Providers.QuestionBll.GetAllQuestionsByFk(testId);
+                if (questions != null)
+                {
+                    foreach (var question in questions)
+                {
+                    var answers = Providers.AnswerBll.GetAllAnswersByFk(question.Id);
+                    if (answers != null)
+                    {
+                        foreach (var answer in answers)
+                        {
+                            result = Providers.AnswerBll.DeleteAnswer(answer.Id);
+                            if (!result)
+                            {
+                                throw new Exception();
+                            }
+                        }
+                    }
+
+                    result = Providers.QuestionBll.DeleteQuestion(question.Id);
+                    if (!result)
+                    {
+                        throw new Exception();
+                    }
+                }
+            }
+                
+                result = Providers.TestBll.DeleteTest(testId);
+
+                if (result)
+                {
+                    Response.Redirect("~");
+                }
+        }
+    }
+}
+
+<form method="post" action="~/Pages/Tests/Delete.cshtml">
+    <span class="alert alert-danger">
+        Warning: All related information would been deleted also. Continue?
+    </span>
+    <div class="form-group">
+        <input type="text" class="form-control hidden" name="TestId" value="@test.Id">
+    </div>
+    <div class="form-group">
+        <button type="submit" class="btn">Yes</button>
+        <a href="~/default.cshtml" class="btn">No</a>
+    </div>
+</form>

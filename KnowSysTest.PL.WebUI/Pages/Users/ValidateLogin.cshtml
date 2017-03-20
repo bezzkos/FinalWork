@@ -1,0 +1,25 @@
+﻿@using KnowSysTest.PL.WebUI.Helpers
+@{
+    if (IsAjax)
+    {
+        if (Request["login"] != null)
+        {
+            Layout = null;
+
+            var login = Request["login"];
+
+            if (JQueryValidationHelper.UsernameCheck(login))
+            {
+                Response.Write("false");
+            }
+            else if (!JQueryValidationHelper.UsernameCheck(login))
+            {
+                Response.Write("true");
+            }
+        }
+        else
+        {
+            Response.Write("false");
+        }
+    }
+}

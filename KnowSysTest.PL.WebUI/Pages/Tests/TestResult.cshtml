@@ -1,0 +1,144 @@
+﻿@using KnowSysTest.Common
+@using KnowSysTest.Entities
+@using KnowSysTest.PL.WebUI.Helpers
+@using KnowSysTest.PL.WebUI.ViewModels
+
+@{
+    Page.Title = "Results";
+    var user = Providers.UserBll.GetUserByName(User.Identity.Name);
+    var test = new TestDTO();
+    List<AnswerDTO> answers = new List<AnswerDTO>();
+    IReadOnlyList<QuestionDTO> reqQuestions = null;
+    IReadOnlyList<QuestionDTO> questions = null;
+    var isPassed = true;
+    float mark = 0;
+    float highMark = 0;
+
+    if (IsPost)
+    {
+        if (!User.Identity.IsAuthenticated)
+        {
+            Response.Redirect(string.Format("~/Pages/Users/Login.cshtml?backUrl={0}", Request.CurrentExecutionFilePath));
+            Log.For(this).WarnFormat("Unauthorized access attempt - {0}", Request.CurrentExecutionFilePath);
+            return;
+        }
+
+        if (Request["TestId"] == null)
+        {
+            Response.SetStatus(HttpStatusCode.NotFound);
+            Log.For(this).WarnFormat("Incorrect input parameter: Id = {0}", Request["TestId"]);
+            return;
+        }
+        try
+        {
+            test = Providers.TestBll.GetTest(Guid.Parse(Request["TestId"]));
+        }
+        catch (Exception e)
+        {
+            Log.For(this).ErrorFormat("An error occured while test build: Id = {0}, message: {1}", Request["TestId"], e);
+            return;
+        }
+
+        try
+        {
+            var DTOs = Providers.QuestionBll.GetAllRequiredQuestionsByFk(test.Id);
+            reqQuestions = DTOs as IReadOnlyList<QuestionDTO> ?? DTOs.ToList();
+        }
+        catch (Exception e)
+        {
+            Log.For(this).ErrorFormat("An error occured while test build: Id = {0}, message: {1}", test.Id, e);
+            return;
+        }
+
+        try
+        {
+            var DTOs = Providers.QuestionBll.GetAllQuestionsByFk(test.Id);
+            questions = DTOs as IReadOnlyList<QuestionDTO> ?? DTOs.ToList();
+        }
+        catch (Exception e)
+        {
+            Log.For(this).ErrorFormat("An error occured while test build: Id = {0}, message: {1}", test.Id, e);
+            return;
+        }
+
+        for (var i = 0; i < questions.Count; i++)
+        {
+            if (!Request[string.Format("AnswerRadio{0}", i)].IsEmpty())
+            {
+                foreach (var answerId in Request[string.Format("AnswerRadio{0}", i)].Split(','))
+                {
+                    try
+                    {
+                        var answer = Providers.AnswerBll.GetAnswer(Guid.Parse(answerId));
+                        answers.Add(answer);
+                    }
+                    catch (Exception e)
+                    {
+                        Log.For(this).ErrorFormat("An error occured while test build: Id = {0}, message: {1}", test.Id, e);
+                        return;
+                    }
+                }
+            }
+        }
+        
+
+        if (!Request["AnswerCheckbox"].IsEmpty())
+        {
+            foreach (var answerId in Request["AnswerCheckbox"].Split(','))
+            {
+                try
+                {
+                    var answer = Providers.AnswerBll.GetAnswer(Guid.Parse(answerId));
+                    answers.Add(answer);
+                }
+                catch (Exception e)
+                {
+                    Log.For(this).ErrorFormat("An error occured while test build: Id = {0}, message: {1}", test.Id, e);
+                    return;
+                }
+            }
+        }
+
+        if (reqQuestions != null && reqQuestions.Any())
+        {
+            isPassed = TestsHelper.CheckOnRequiredQuesyionsPass(answers, reqQuestions);
+        }
+
+        if (questions != null && questions.Any())
+        {
+            mark = TestsHelper.CalculateMark(answers, questions);
+            highMark = TestsHelper.CalculateHighMark(test.Id);
+
+            if (isPassed)
+            {
+                isPassed = TestsHelper.CheckTestOnPass(mark, highMark);
+            }
+
+            try
+            {
+                var userTest = new UserTestVM(user.UserId, test.Id, mark, isPassed, DateTime.Now);
+                Providers.UserTestBll.CreateUserTest(userTest);
+            }
+            catch (Exception e)
+            {
+                Log.For(this).ErrorFormat("An error occured while test build: Id = {0}, message: {1}", test.Id, e);
+                return;
+            }
+        }
+        else
+        {
+            throw new Exception();
+        }
+    }
+}
+
+<div class="row">
+    <div class="col-xs-12 col-md-6">
+        <p class="alert @(isPassed ? "alert-success" : "alert-danger")">
+            @(isPassed ? "Test passed!" : "Test failed!")
+        </p>
+        <span class="alert alert-info">
+            Your score: @(Math.Round((mark / highMark), 2) * 100) %
+        </span>
+    </div>
+</div>

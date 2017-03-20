@@ -1,0 +1,45 @@
+﻿@using KnowSysTest.Common
+@using KnowSysTest.PL.WebUI.Helpers
+@using KnowSysTest.PL.WebUI.ViewModels
+
+@{
+    Page.Title = "Create New Category";
+    if (IsPost)
+    {
+        if (!User.Identity.IsAuthenticated || !User.IsInRole("Admin"))
+        {
+            Response.Redirect(string.Format("~/Pages/Users/Login.cshtml?backUrl={0}&moDAL=1", Request.CurrentExecutionFilePath));
+            Log.For(this).WarnFormat("Unauthorized access attempt - {0}", Request.CurrentExecutionFilePath);
+            return;
+        }
+        var title = Request["CategoryTitle"];
+
+        if (!string.IsNullOrWhiteSpace(title))
+        {
+            var category = new CategoryVM(title);
+            var result = Providers.CategoryBll.CreateCategory(category);
+
+            if (result)
+            {
+                Response.Redirect("~");
+            }
+        }
+    }
+}
+
+<div class="row">
+    <div class="col-xs-12">
+        <form action="~/Pages/Categories/CreateNewCategory.cshtml" id="OnValidate" method="post">
+            <div class="form-group">
+                <label class="required" for="inputTitle">Title</label>
+                <input type="text" class="form-control" id="inputTitle" name="Title" placeholder="Title">
+            </div>
+            <button type="submit" class="btn btn-default">Submit</button>
+        </form>
+    </div>
+</div>
+
+@section scripts{
+    <script src="~/Scripts/jquery.validate.js"></script>
+    <script src="~/Scripts/validateCommonSimpleForms.js"></script>
+}
